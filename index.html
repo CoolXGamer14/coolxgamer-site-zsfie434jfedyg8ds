@@ -5,12 +5,13 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Roblox API Search Suite</title>
     <style>
+        /* Light Blue / Cyan Style Theme Variables */
         :root {
             --bg-color: #0b0b0c;
             --panel-bg: #16161a;
             --input-bg: #202024;
-            --accent-purple: #bca0ff;
-            --accent-hover: #a382f7;
+            --accent-blue: #70d6ff;      /* Light Blue Accent */
+            --accent-hover: #52c2f2;     /* Hover State Blue */
             --text-main: #ffffff;
             --text-muted: #8e8e93;
             --border-color: #2c2c30;
@@ -31,7 +32,7 @@
             max-width: 900px;
             display: flex;
             flex-direction: column;
-            gap: 60px; /* Space between the tools */
+            gap: 60px;
         }
 
         .tool-section {
@@ -42,7 +43,7 @@
         }
 
         h1 {
-            color: var(--accent-purple);
+            color: var(--accent-blue);
             font-size: 32px;
             font-weight: 700;
             margin: 0 0 12px 0;
@@ -75,11 +76,11 @@
         }
 
         input:focus {
-            border-color: var(--accent-purple);
+            border-color: var(--accent-blue);
         }
 
         button {
-            background-color: var(--accent-purple);
+            background-color: var(--accent-blue);
             color: #000000;
             border: none;
             border-radius: 8px;
@@ -171,7 +172,7 @@
     <!-- TOOL 1: PLACEID TO UNIVERSEID -->
     <div class="tool-section">
         <h1>PlaceID to UniverseID</h1>
-        <div class="subtitle">A simple tool to get the UniverseID from a PlaceID. Made by pwoofy.</div>
+        <div class="subtitle">A simple tool to get the UniverseID from a PlaceID. Inspired by pwoofy.</div>
 
         <div class="input-wrapper">
             <input type="text" id="placeIdInput" placeholder="Enter Place ID here..." autocomplete="off">
@@ -192,7 +193,7 @@
     <!-- TOOL 2: UNIVERSEID API SEARCHER -->
     <div class="tool-section">
         <h1>UniverseID API Searcher</h1>
-        <div class="subtitle">yall pmo with the api puzzle. Made by pwoofy.</div>
+        <div class="subtitle">yall pmo with the api puzzle. Inspired by pwoofy.</div>
 
         <div class="input-wrapper">
             <input type="text" id="universeIdInput" placeholder="Enter Universe ID here..." autocomplete="off">
@@ -222,11 +223,12 @@ async function lookupUniverseId() {
         return;
     }
 
-    const nativeRobloxUrl = `https://apis.roblox.com/universes/places/{input}/universe`;
+    // FIX: Restored the vital "/v1/" path directory into the endpoint setup
+    const nativeRobloxUrl = `https://apis.roblox.com/universes/v1/places/{input}/universe`;
     urlDisplay.textContent = nativeRobloxUrl;
     jsonOutput.innerHTML = `<span class="status-msg">Fetching data stream...</span>`;
 
-    const proxyUrl = `https://apis.roproxy.com/universes/places/{input}/universe`;
+    const proxyUrl = `https://apis.roproxy.com/universes/v1/places/{input}/universe`;
     
     try {
         const response = await fetch(proxyUrl);
@@ -254,7 +256,6 @@ async function lookupGameDetails() {
     urlDisplay.textContent = nativeRobloxUrl;
     jsonOutput.innerHTML = `<span class="status-msg">Fetching game metrics...</span>`;
 
-    // Routing properly through RoProxy's game endpoint cluster
     const proxyUrl = `https://games.roproxy.com/v1/games?universeIds={input}`;
     
     try {
@@ -273,7 +274,6 @@ function copyJsonToClipboard(targetId) {
     const codeContent = document.getElementById(targetId).textContent;
     navigator.clipboard.writeText(codeContent);
     
-    // Dynamically find the exact button that clicked this function
     const eventButton = window.event.target;
     eventButton.textContent = 'Copied!';
     setTimeout(() => { eventButton.textContent = 'Copy JSON'; }, 2000);
