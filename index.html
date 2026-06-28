@@ -223,12 +223,12 @@ async function lookupUniverseId() {
         return;
     }
 
-    const nativeRobloxUrl = `https://apis.roblox.com/universes/v1/places/{input}/universe`;
+    const nativeRobloxUrl = `https://apis.roblox.com/universes/v1/places/${input}/universe`;
     urlDisplay.textContent = nativeRobloxUrl;
     jsonOutput.innerHTML = `<span class="status-msg">Fetching data stream...</span>`;
 
     // Try primary proxy first
-    const primaryProxy = `https://apis.roproxy.com/universes/v1/places/{input}/universe`;
+    const primaryProxy = `https://apis.roproxy.com/universes/v1/places/${input}/universe`;
     const fallbackProxy = `https://api.allorigins.win/raw?url={encodeURIComponent(nativeRobloxUrl)}`;
     
     try {
@@ -260,11 +260,11 @@ async function lookupGameDetails() {
         return;
     }
 
-    const nativeRobloxUrl = `https://games.roblox.com/v1/games?universeIds={input}`;
+    const nativeRobloxUrl = `https://games.roblox.com/v1/games?universeIds=${input}`;
     urlDisplay.textContent = nativeRobloxUrl;
     jsonOutput.innerHTML = `<span class="status-msg">Fetching game metrics...</span>`;
 
-    const primaryProxy = `https://games.roproxy.com/v1/games?universeIds={input}`;
+    const primaryProxy = `https://games.roproxy.com/v1/games?universeIds=${input}`;
     const fallbackProxy = `https://api.allorigins.win/raw?url={encodeURIComponent(nativeRobloxUrl)}`;
     
     try {
