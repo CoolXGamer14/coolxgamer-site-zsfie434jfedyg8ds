@@ -3,127 +3,215 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>🕵️‍♂️ Hub - Roblox API Tool</title>
+    <title>PlaceID to UniverseID</title>
     <style>
+        /* Pwoofy Style Theme Variables */
+        :root {
+            --bg-color: #0b0b0c;
+            --panel-bg: #16161a;
+            --input-bg: #202024;
+            --accent-purple: #bca0ff;
+            --accent-hover: #a382f7;
+            --text-main: #ffffff;
+            --text-muted: #8e8e93;
+            --border-color: #2c2c30;
+        }
+
         body {
-            font-family: 'Consolas', 'Courier New', monospace;
-            background-color: #121212;
-            color: #00ff66;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            background-color: var(--bg-color);
+            color: var(--text-main);
             margin: 0;
-            padding: 20px;
-        }
-        .wrapper {
-            max-width: 900px;
-            margin: 0 auto;
-        }
-        header {
-            border-bottom: 2px dashed #00ff66;
-            padding-bottom: 20px;
-            margin-bottom: 20px;
-        }
-        h1 { margin: 0; font-size: 24px; text-shadow: 0 0 10px #00ff66; }
-        .subtitle { color: #888; font-size: 14px; margin-top: 5px; }
-        .input-panel {
-            background: #1a1a1a;
-            border: 1px solid #333;
-            padding: 20px;
-            border-radius: 5px;
-            margin-bottom: 20px;
-        }
-        .input-row {
+            padding: 40px 20px;
             display: flex;
-            gap: 10px;
-            margin-top: 10px;
+            justify-content: center;
         }
-        input, select, button {
-            background: #000;
-            border: 1px solid #00ff66;
-            color: #00ff66;
-            padding: 10px;
-            font-family: inherit;
-            border-radius: 3px;
+
+        .container {
+            width: 100%;
+            max-width: 900px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
         }
-        input { flex: 1; }
-        button { cursor: pointer; font-weight: bold; }
-        button:hover { background: #00ff66; color: #000; }
-        .output-panel {
-            background: #050505;
-            border: 1px solid #00ff66;
+
+        h1 {
+            color: var(--accent-purple);
+            font-size: 32px;
+            font-weight: 700;
+            margin: 0 0 12px 0;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            font-size: 15px;
+            margin-bottom: 40px;
+            text-align: center;
+        }
+
+        /* Top Bar Inputs */
+        .input-wrapper {
+            width: 100%;
+            display: flex;
+            gap: 12px;
+            margin-bottom: 24px;
+        }
+
+        input {
+            flex: 1;
+            background-color: var(--input-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            color: var(--text-main);
+            padding: 14px 16px;
+            font-size: 16px;
+            outline: none;
+            transition: border 0.2s;
+        }
+
+        input:focus {
+            border-color: var(--accent-purple);
+        }
+
+        button {
+            background-color: var(--accent-purple);
+            color: #000000;
+            border: none;
+            border-radius: 8px;
+            padding: 0 24px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            white-space: nowrap;
+        }
+
+        button:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Main Output Box */
+        .output-card {
+            width: 100%;
+            background-color: var(--panel-bg);
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        /* Header block inside output box */
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 14px;
+            font-weight: 500;
+            color: #d1d1d6;
+        }
+
+        .copy-btn {
+            background: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--text-muted);
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            cursor: pointer;
+        }
+
+        .copy-btn:hover {
+            background: var(--input-bg);
+            color: var(--text-main);
+        }
+
+        /* Code/JSON container styling */
+        .card-body {
             padding: 20px;
-            border-radius: 5px;
-            min-height: 200px;
-            white-space: pre-wrap;
-            box-shadow: inset 0 0 15px rgba(0,255,102,0.1);
+            margin: 0;
+            font-family: 'SFMono-Regular', Consolas, 'Liberation Mono', Menlo, monospace;
+            font-size: 14px;
+            line-height: 1.5;
+            overflow-x: auto;
         }
-        .error { color: #ff3333; }
-        .success { color: #00ff66; }
-        .loading { color: #ffcc00; animation: blink 1s infinite; }
-        @keyframes blink { 50% { opacity: 0.5; } }
+
+        .api-url-display {
+            color: var(--text-muted);
+            margin-bottom: 16px;
+            word-break: break-all;
+        }
+
+        .json-payload {
+            color: #ffd07b;
+        }
+        
+        .status-msg {
+            color: var(--text-muted);
+        }
     </style>
 </head>
 <body>
 
-<div class="wrapper">
-    <header>
-        <h1>📡 PROJECT: SOLVER_EXTRACTOR</h1>
-        <div class="subtitle">Inspired by community puzzle tools. Running unlisted node.</div>
-    </header>
+<div class="container">
+    <h1>PlaceID to UniverseID</h1>
+    <div class="subtitle">A tool to get the UniverseID from a PlaceID. Inspired by pwoofy.</div>
 
-    <div class="input-panel">
-        <label for="targetId">Enter Target Identification Number:</label>
-        <div class="input-row">
-            <select id="idType">
-                <option value="place">Place ID</option>
-                <option value="universe">Universe ID</option>
-            </select>
-            <input type="text" id="targetId" placeholder="e.g., 1818" autocomplete="off">
-            <button onclick="fetchRobloxData()">RUN EXTRACTOR</button>
-        </div>
+    <div class="input-wrapper">
+        <input type="text" id="placeIdInput" placeholder="Enter Place ID here..." autocomplete="off">
+        <button onclick="lookupUniverseId()">Fetch Data</button>
     </div>
 
-    <h3>💾 DATA OUTPUT BUFFER:</h3>
-    <div class="output-panel" id="output">Ready for input commands...</div>
+    <div class="output-card">
+        <div class="card-header">
+            <div class="card-title">PlaceID ➔ UniverseID</div>
+            <button class="copy-btn" onclick="copyJsonToClipboard()">Copy JSON</button>
+        </div>
+        <pre class="card-body"><div class="api-url-display" id="urlDisplay">https://roblox.com</div><code class="json-payload" id="jsonOutput"><span class="status-msg">{ "waiting": "Provide a PlaceID above to run query" }</span></code></pre>
+    </div>
 </div>
 
 <script>
-async function fetchRobloxData() {
-    const id = document.getElementById('targetId').value.trim();
-    const type = document.getElementById('idType').value;
-    const output = document.getElementById('output');
+async function lookupUniverseId() {
+    const input = document.getElementById('placeIdInput').value.trim();
+    const urlDisplay = document.getElementById('urlDisplay');
+    const jsonOutput = document.getElementById('jsonOutput');
 
-    if (!id) {
-        output.innerHTML = '<span class="error">[ERROR]: Target ID missing. Provide parameters.</span>';
+    if (!input) {
+        jsonOutput.innerHTML = `<span style="color:#ff6b6b">{ "error": "Please enter a valid Place ID" }</span>`;
         return;
     }
 
-    output.innerHTML = '<span class="loading">[FETCHING]: Accessing endpoints through proxy framework...</span>';
+    // Reflecting the exact endpoint layout like the screenshot
+    const nativeRobloxUrl = `https://apis.roblox.com/universe/v1/places/{input}/universe`;
+    urlDisplay.textContent = nativeRobloxUrl;
+    jsonOutput.innerHTML = `<span class="status-msg">Fetching data stream...</span>`;
 
-    // Using a public proxy setup to bypass CORS restrictions safely
-    const proxy = "https://herokuapp.com";
-    let endpoint = "";
-
-    if (type === "place") {
-        endpoint = `${proxy}https://roblox.com{id}`;
-    } else {
-        endpoint = `${proxy}https://roblox.com{id}`;
-    }
-
+    // Utilizing a proxy system to sidestep web-browser CORS blockades smoothly
+    const corsProxy = "https://allorigins.win";
+    
     try {
-        const response = await fetch(endpoint, {
-            headers: { 'X-Requested-With': 'XMLHttpRequest' }
-        });
-        
-        if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+        const response = await fetch(`${corsProxy}${encodeURIComponent(nativeRobloxUrl)}`);
+        if (!response.ok) throw new Error(`Network status code: ${response.status}`);
         
         const data = await response.json();
-        
-        output.innerHTML = `<span class="success">[SUCCESS]: Data stream extracted successfully.</span>\n\n`;
-        output.innerHTML += JSON.stringify(data, null, 4);
+        jsonOutput.textContent = JSON.stringify(data, null, 4);
     } catch (err) {
-        output.innerHTML = `<span class="error">[CRITICAL ERROR]: Target extraction failed.</span>\n`;
-        output.innerHTML += `Reason: ${err.message}\n\n`;
-        output.innerHTML += `💡 Note: If proxy access is limited, you may need to visit https://herokuapp.com to unlock temporary access for your browser session.`;
+        jsonOutput.innerHTML = `<span style="color:#ff6b6b">{\n    "error": "Failed to pull API data",\n    "message": "${err.message}"\n}</span>`;
     }
+}
+
+function copyJsonToClipboard() {
+    const codeContent = document.getElementById('jsonOutput').textContent;
+    navigator.clipboard.writeText(codeContent);
+    
+    const copyBtn = document.querySelector('.copy-btn');
+    copyBtn.textContent = 'Copied!';
+    setTimeout(() => { copyBtn.textContent = 'Copy JSON'; }, 2000);
 }
 </script>
 
