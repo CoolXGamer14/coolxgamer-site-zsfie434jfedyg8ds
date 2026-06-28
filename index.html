@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🕵️‍♂️ Hub - Roblox API Tool</title>
+    <style>
+        body {
+            font-family: 'Consolas', 'Courier New', monospace;
+            background-color: #121212;
+            color: #00ff66;
+            margin: 0;
+            padding: 20px;
+        }
+        .wrapper {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        header {
+            border-bottom: 2px dashed #00ff66;
+            padding-bottom: 20px;
+            margin-bottom: 20px;
+        }
+        h1 { margin: 0; font-size: 24px; text-shadow: 0 0 10px #00ff66; }
+        .subtitle { color: #888; font-size: 14px; margin-top: 5px; }
+        .input-panel {
+            background: #1a1a1a;
+            border: 1px solid #333;
+            padding: 20px;
+            border-radius: 5px;
+            margin-bottom: 20px;
+        }
+        .input-row {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+        }
+        input, select, button {
+            background: #000;
+            border: 1px solid #00ff66;
+            color: #00ff66;
+            padding: 10px;
+            font-family: inherit;
+            border-radius: 3px;
+        }
+        input { flex: 1; }
+        button { cursor: pointer; font-weight: bold; }
+        button:hover { background: #00ff66; color: #000; }
+        .output-panel {
+            background: #050505;
+            border: 1px solid #00ff66;
+            padding: 20px;
+            border-radius: 5px;
+            min-height: 200px;
+            white-space: pre-wrap;
+            box-shadow: inset 0 0 15px rgba(0,255,102,0.1);
+        }
+        .error { color: #ff3333; }
+        .success { color: #00ff66; }
+        .loading { color: #ffcc00; animation: blink 1s infinite; }
+        @keyframes blink { 50% { opacity: 0.5; } }
+    </style>
+</head>
+<body>
+
+<div class="wrapper">
+    <header>
+        <h1>📡 PROJECT: SOLVER_EXTRACTOR</h1>
+        <div class="subtitle">Inspired by community puzzle tools. Running unlisted node.</div>
+    </header>
+
+    <div class="input-panel">
+        <label for="targetId">Enter Target Identification Number:</label>
+        <div class="input-row">
+            <select id="idType">
+                <option value="place">Place ID</option>
+                <option value="universe">Universe ID</option>
+            </select>
+            <input type="text" id="targetId" placeholder="e.g., 1818" autocomplete="off">
+            <button onclick="fetchRobloxData()">RUN EXTRACTOR</button>
+        </div>
+    </div>
+
+    <h3>💾 DATA OUTPUT BUFFER:</h3>
+    <div class="output-panel" id="output">Ready for input commands...</div>
+</div>
+
+<script>
+async function fetchRobloxData() {
+    const id = document.getElementById('targetId').value.trim();
+    const type = document.getElementById('idType').value;
+    const output = document.getElementById('output');
+
+    if (!id) {
+        output.innerHTML = '<span class="error">[ERROR]: Target ID missing. Provide parameters.</span>';
+        return;
+    }
+
+    output.innerHTML = '<span class="loading">[FETCHING]: Accessing endpoints through proxy framework...</span>';
+
+    // Using a public proxy setup to bypass CORS restrictions safely
+    const proxy = "https://herokuapp.com";
+    let endpoint = "";
+
+    if (type === "place") {
+        endpoint = `${proxy}https://roblox.com{id}`;
+    } else {
+        endpoint = `${proxy}https://roblox.com{id}`;
+    }
+
+    try {
+        const response = await fetch(endpoint, {
+            headers: { 'X-Requested-With': 'XMLHttpRequest' }
+        });
+        
+        if (!response.ok) throw new Error(`HTTP status ${response.status}`);
+        
+        const data = await response.json();
+        
+        output.innerHTML = `<span class="success">[SUCCESS]: Data stream extracted successfully.</span>\n\n`;
+        output.innerHTML += JSON.stringify(data, null, 4);
+    } catch (err) {
+        output.innerHTML = `<span class="error">[CRITICAL ERROR]: Target extraction failed.</span>\n`;
+        output.innerHTML += `Reason: ${err.message}\n\n`;
+        output.innerHTML += `💡 Note: If proxy access is limited, you may need to visit https://herokuapp.com to unlock temporary access for your browser session.`;
+    }
+}
+</script>
+
+</body>
+</html>
