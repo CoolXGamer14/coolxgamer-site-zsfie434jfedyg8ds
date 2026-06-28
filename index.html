@@ -187,12 +187,12 @@ async function lookupUniverseId() {
     }
 
     // Reflecting the exact endpoint layout like the screenshot
-    const nativeRobloxUrl = `https://apis.roblox.com/universe/v1/places/{input}/universe`;
+    const nativeRobloxUrl = `/universe/v1/places/{input}/universe`;
     urlDisplay.textContent = nativeRobloxUrl;
     jsonOutput.innerHTML = `<span class="status-msg">Fetching data stream...</span>`;
 
     // Utilizing a proxy system to sidestep web-browser CORS blockades smoothly
-    const corsProxy = "https://allorigins.win";
+    const corsProxy = "https://apis.roproxy.com";
     
     try {
         const response = await fetch(`${corsProxy}${encodeURIComponent(nativeRobloxUrl)}`);
