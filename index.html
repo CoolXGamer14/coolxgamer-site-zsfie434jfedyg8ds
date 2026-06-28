@@ -223,15 +223,23 @@ async function lookupUniverseId() {
         return;
     }
 
-    // FIX: Restored the vital "/v1/" path directory into the endpoint setup
     const nativeRobloxUrl = `https://apis.roblox.com/universes/v1/places/{input}/universe`;
     urlDisplay.textContent = nativeRobloxUrl;
     jsonOutput.innerHTML = `<span class="status-msg">Fetching data stream...</span>`;
 
-    const proxyUrl = `https://apis.roproxy.com/universes/v1/places/{input}/universe`;
+    // Try primary proxy first
+    const primaryProxy = `https://apis.roproxy.com/universes/v1/places/{input}/universe`;
+    const fallbackProxy = `https://api.allorigins.win/raw?url={encodeURIComponent(nativeRobloxUrl)}`;
     
     try {
-        const response = await fetch(proxyUrl);
+        let response = await fetch(primaryProxy);
+        
+        // If rate-limited (429), automatically trigger the fallback proxy
+        if (response.status === 429) {
+            jsonOutput.innerHTML = `<span class="status-msg" style="color: #ffd07b">Primary proxy rate-limited (429). Routing through backup pipeline...</span>`;
+            response = await fetch(fallbackProxy);
+        }
+        
         if (!response.ok) throw new Error(`Network status code: ${response.status}`);
         
         const data = await response.json();
@@ -256,10 +264,17 @@ async function lookupGameDetails() {
     urlDisplay.textContent = nativeRobloxUrl;
     jsonOutput.innerHTML = `<span class="status-msg">Fetching game metrics...</span>`;
 
-    const proxyUrl = `https://games.roproxy.com/v1/games?universeIds={input}`;
+    const primaryProxy = `https://games.roproxy.com/v1/games?universeIds={input}`;
+    const fallbackProxy = `https://api.allorigins.win/raw?url={encodeURIComponent(nativeRobloxUrl)}`;
     
     try {
-        const response = await fetch(proxyUrl);
+        let response = await fetch(primaryProxy);
+        
+        if (response.status === 429) {
+            jsonOutput.innerHTML = `<span class="status-msg" style="color: #ffd07b">Primary proxy rate-limited (429). Routing through backup pipeline...</span>`;
+            response = await fetch(fallbackProxy);
+        }
+        
         if (!response.ok) throw new Error(`Network status code: ${response.status}`);
         
         const data = await response.json();
