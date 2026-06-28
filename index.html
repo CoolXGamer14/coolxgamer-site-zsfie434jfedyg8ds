@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>PlaceID to UniverseID</title>
+    <title>Roblox API Search Suite</title>
     <style>
-        /* Pwoofy Style Theme Variables */
         :root {
             --bg-color: #0b0b0c;
             --panel-bg: #16161a;
@@ -32,7 +31,14 @@
             max-width: 900px;
             display: flex;
             flex-direction: column;
+            gap: 60px; /* Space between the tools */
+        }
+
+        .tool-section {
+            display: flex;
+            flex-direction: column;
             align-items: center;
+            width: 100%;
         }
 
         h1 {
@@ -49,7 +55,6 @@
             text-align: center;
         }
 
-        /* Top Bar Inputs */
         .input-wrapper {
             width: 100%;
             display: flex;
@@ -90,7 +95,6 @@
             background-color: var(--accent-hover);
         }
 
-        /* Main Output Box */
         .output-card {
             width: 100%;
             background-color: var(--panel-bg);
@@ -99,7 +103,6 @@
             overflow: hidden;
         }
 
-        /* Header block inside output box */
         .card-header {
             display: flex;
             justify-content: space-between;
@@ -130,7 +133,6 @@
             color: var(--text-main);
         }
 
-        /* Code/JSON container styling */
         .card-body {
             padding: 20px;
             margin: 0;
@@ -153,29 +155,63 @@
         .status-msg {
             color: var(--text-muted);
         }
+
+        .divider {
+            border: 0;
+            height: 1px;
+            background: var(--border-color);
+            width: 100%;
+        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h1>PlaceID to UniverseID</h1>
-    <div class="subtitle">A tool to get the UniverseID from a PlaceID. Inspired by pwoofy.</div>
 
-    <div class="input-wrapper">
-        <input type="text" id="placeIdInput" placeholder="Enter Place ID here..." autocomplete="off">
-        <button onclick="lookupUniverseId()">Fetch Data</button>
-    </div>
+    <!-- TOOL 1: PLACEID TO UNIVERSEID -->
+    <div class="tool-section">
+        <h1>PlaceID to UniverseID</h1>
+        <div class="subtitle">A simple tool to get the UniverseID from a PlaceID. Made by pwoofy.</div>
 
-    <div class="output-card">
-        <div class="card-header">
-            <div class="card-title">PlaceID ➔ UniverseID</div>
-            <button class="copy-btn" onclick="copyJsonToClipboard()">Copy JSON</button>
+        <div class="input-wrapper">
+            <input type="text" id="placeIdInput" placeholder="Enter Place ID here..." autocomplete="off">
+            <button onclick="lookupUniverseId()">Fetch Data</button>
         </div>
-        <pre class="card-body"><div class="api-url-display" id="urlDisplay">https://roblox.com</div><code class="json-payload" id="jsonOutput"><span class="status-msg">{ "waiting": "Provide a PlaceID above to run query" }</span></code></pre>
+
+        <div class="output-card">
+            <div class="card-header">
+                <div class="card-title">PlaceID ➔ UniverseID</div>
+                <button class="copy-btn" onclick="copyJsonToClipboard('jsonOutput')">Copy JSON</button>
+            </div>
+            <pre class="card-body"><div class="api-url-display" id="urlDisplay">https://roblox.com</div><code class="json-payload" id="jsonOutput"><span class="status-msg">{ "waiting": "Provide a PlaceID above to run query" }</span></code></pre>
+        </div>
     </div>
+
+    <hr class="divider">
+
+    <!-- TOOL 2: UNIVERSEID API SEARCHER -->
+    <div class="tool-section">
+        <h1>UniverseID API Searcher</h1>
+        <div class="subtitle">yall pmo with the api puzzle. Made by pwoofy.</div>
+
+        <div class="input-wrapper">
+            <input type="text" id="universeIdInput" placeholder="Enter Universe ID here..." autocomplete="off">
+            <button onclick="lookupGameDetails()">Fetch Data</button>
+        </div>
+
+        <div class="output-card">
+            <div class="card-header">
+                <div class="card-title">Game Details (Multi-Get)</div>
+                <button class="copy-btn" onclick="copyJsonToClipboard('searcherOutput')">Copy JSON</button>
+            </div>
+            <pre class="card-body"><div class="api-url-display" id="searcherUrlDisplay">https://roblox.com</div><code class="json-payload" id="searcherOutput"><span class="status-msg">{ "waiting": "Provide a UniverseID above to run query" }</span></code></pre>
+        </div>
+    </div>
+
 </div>
 
 <script>
+// --- Tool 1 Pipeline ---
 async function lookupUniverseId() {
     const input = document.getElementById('placeIdInput').value.trim();
     const urlDisplay = document.getElementById('urlDisplay');
@@ -186,16 +222,14 @@ async function lookupUniverseId() {
         return;
     }
 
-    // Reflecting the exact endpoint layout like the screenshot
-    const nativeRobloxUrl = `/universe/v1/places/{input}/universe`;
+    const nativeRobloxUrl = `https://apis.roblox.com/universes/places/{input}/universe`;
     urlDisplay.textContent = nativeRobloxUrl;
     jsonOutput.innerHTML = `<span class="status-msg">Fetching data stream...</span>`;
 
-    // Utilizing a proxy system to sidestep web-browser CORS blockades smoothly
-    const corsProxy = "https://apis.roproxy.com";
+    const proxyUrl = `https://apis.roproxy.com/universes/places/{input}/universe`;
     
     try {
-        const response = await fetch(`${corsProxy}${encodeURIComponent(nativeRobloxUrl)}`);
+        const response = await fetch(proxyUrl);
         if (!response.ok) throw new Error(`Network status code: ${response.status}`);
         
         const data = await response.json();
@@ -205,13 +239,44 @@ async function lookupUniverseId() {
     }
 }
 
-function copyJsonToClipboard() {
-    const codeContent = document.getElementById('jsonOutput').textContent;
+// --- Tool 2 Pipeline ---
+async function lookupGameDetails() {
+    const input = document.getElementById('universeIdInput').value.trim();
+    const urlDisplay = document.getElementById('searcherUrlDisplay');
+    const jsonOutput = document.getElementById('searcherOutput');
+
+    if (!input) {
+        jsonOutput.innerHTML = `<span style="color:#ff6b6b">{ "error": "Please enter a valid Universe ID" }</span>`;
+        return;
+    }
+
+    const nativeRobloxUrl = `https://games.roblox.com/v1/games?universeIds={input}`;
+    urlDisplay.textContent = nativeRobloxUrl;
+    jsonOutput.innerHTML = `<span class="status-msg">Fetching game metrics...</span>`;
+
+    // Routing properly through RoProxy's game endpoint cluster
+    const proxyUrl = `https://games.roproxy.com/v1/games?universeIds={input}`;
+    
+    try {
+        const response = await fetch(proxyUrl);
+        if (!response.ok) throw new Error(`Network status code: ${response.status}`);
+        
+        const data = await response.json();
+        jsonOutput.textContent = JSON.stringify(data, null, 4);
+    } catch (err) {
+        jsonOutput.innerHTML = `<span style="color:#ff6b6b">{\n    "error": "Failed to pull Game API data",\n    "message": "${err.message}"\n}</span>`;
+    }
+}
+
+// --- Shared Utility Functions ---
+function copyJsonToClipboard(targetId) {
+    const codeContent = document.getElementById(targetId).textContent;
     navigator.clipboard.writeText(codeContent);
     
-    const copyBtn = document.querySelector('.copy-btn');
-    copyBtn.textContent = 'Copied!';
-    setTimeout(() => { copyBtn.textContent = 'Copy JSON'; }, 2000);
+    // Dynamically find the exact button that clicked this function
+    const eventButton = window.event.target;
+    eventButton.textContent = 'Copied!';
+    setTimeout(() => { eventButton.textContent = 'Copy JSON'; }, 2000);
 }
 </script>
 
